@@ -4,17 +4,83 @@
  */
 package employeessystem;
 
+import java.io.*;
+import javax.swing.JOptionPane;
+import java.util.*;
+
 /**
  *
  * @author marka
  */
 public class AddJob extends javax.swing.JFrame {
+    
+    private ArrayList<Job> jobs;
 
     /**
      * Creates new form AddJob
      */
     public AddJob() {
         initComponents();
+        jobs=new ArrayList<>();
+        populateArrayList();
+        
+    }
+    
+    //This method reads the jobs from the jobs data file
+    // and store them in the jobs arraylist
+    public void populateArrayList(){
+        try{
+            FileInputStream file=new FileInputStream("Jobs.dat");
+            ObjectInputStream inputFile=new ObjectInputStream(file);
+            
+            boolean endOfFile=false;
+            
+            while(!endOfFile){
+                try{
+                    jobs.add((Job)inputFile.readObject());
+                    
+                }
+                //To catch end of file exception
+                catch(EOFException e){
+                    endOfFile=true;
+                }
+                
+                //To catch any exception that might occure
+                catch (Exception f){
+                   JOptionPane.showMessageDialog(null, f.getMessage());
+
+                }
+                
+            }
+            
+            inputFile.close();
+            
+                    
+        }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    //This method will take each job from the jobs arraylist and save it
+    //in the jobs data file
+    
+    public void saveJobsToFile(){
+        try{
+            FileOutputStream file=new FileOutputStream("jobs.dat");
+            ObjectOutputStream outputFile=new ObjectOutputStream(file);
+            
+            for(Job job:jobs){
+                outputFile.writeObject(job);
+            }
+            
+            outputFile.close();
+            
+            
+        }catch(IOException e){
+      JOptionPane.showMessageDialog(null, e.getMessage());
+
+        }
     }
 
     /**
@@ -33,7 +99,6 @@ public class AddJob extends javax.swing.JFrame {
         jobSalary = new javax.swing.JTextField();
         createButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -51,6 +116,11 @@ public class AddJob extends javax.swing.JFrame {
 
         createButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/save.png"))); // NOI18N
         createButton.setText("Create");
+        createButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -100,6 +170,30 @@ public class AddJob extends javax.swing.JFrame {
     private void jobNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jobNameActionPerformed
+
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+        
+        String name=jobName.getText().trim();
+        String salaryString=jobSalary.getText().trim();
+        
+        if (name.isEmpty()|| salaryString.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Please enter all fields!");
+        }
+        else{
+            double salary=Double.parseDouble(salaryString);
+            Job job= new Job(name, salary);
+            
+            jobs.add(job);
+            saveJobsToFile();
+         JOptionPane.showMessageDialog(null, "Successfully saved");
+         jobName.setText("");
+         jobSalary.setText("");
+
+        }
+            
+        
+     
+    }//GEN-LAST:event_createButtonActionPerformed
 
     /**
      * @param args the command line arguments

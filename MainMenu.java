@@ -146,7 +146,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        
+        new EditJob().setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**

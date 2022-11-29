@@ -4,6 +4,10 @@
  */
 package employeessystem;
 
+import java.io.*;
+import javax.swing.JOptionPane;
+import java.util.*;
+
 /**
  *
  * @author marka
@@ -13,8 +17,113 @@ public class AddEmployee extends javax.swing.JFrame {
     /**
      * Creates new form AddEmployee
      */
+    
+    ArrayList<Job> jobs;
+    ArrayList<Employee> employees;
     public AddEmployee() {
         initComponents();
+        
+        jobs=new ArrayList<>();
+        employees=new ArrayList<>();
+                
+    }
+    
+    //This method reads every job from the jobs data file and 
+    // and puts them in the jobs arraylist
+    public void populateJobsArrayList(){
+        try{
+              FileInputStream file=new FileInputStream("Jobs.dat");
+              ObjectInputStream inputFile=new ObjectInputStream(file);
+              
+              boolean endOfFile=false;
+              
+              while(!endOfFile){
+                  try{
+                      jobs.add((Job)(inputFile.readObject()));
+                  }
+                  catch(EOFException e){
+                      endOfFile=true;
+                  }
+                  catch(Exception f){
+                      JOptionPane.showMessageDialog(null, f.getMessage());
+                  }
+              }
+
+        }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+
+        }
+    }
+    
+    public void populateEmployeesArrayList(){
+        try{
+          FileInputStream file=new FileInputStream("employees.dat");
+          ObjectInputStream inputfile=new ObjectInputStream(file); 
+          
+          boolean endOfFile=false;
+          
+          while(!endOfFile){
+              try{
+                  
+                  employees.add((Employee)inputfile.readObject());
+              }catch(EOFException e){
+                  endOfFile=true;
+              }
+              catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage());
+
+              }
+          }
+          inputfile.close();
+        }
+        
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    
+    //This method takes each job from the jobs arraylist
+    //and puts it into the jobs data file
+    public void saveJobsToFile(){
+        
+        try{
+             FileOutputStream file=new FileOutputStream("employees.dat");
+              ObjectOutputStream outputFile=new ObjectOutputStream(file); 
+              
+              for (Job job:jobs){
+                  outputFile.writeObject(job);
+              }
+              outputFile.close();
+        }
+        
+        catch(IOException e){
+           JOptionPane.showMessageDialog(null, e.getMessage());
+
+        }
+       
+       
+        
+    }
+    
+    //This method takes each employee from the employees arraylist
+    //and puts it into the employees data fil
+    public void saveEmployeesToFile(){
+        
+        try{
+            FileOutputStream file=new FileOutputStream("employees.dat");
+            ObjectOutputStream outputFile=new ObjectOutputStream(file);
+            
+            for(Employee employee:employees){
+                outputFile.writeObject(employee);
+            }
+            outputFile.close();
+        }
+        catch(IOException e){
+         JOptionPane.showMessageDialog(null, e.getMessage());
+
+        }
+        
     }
 
     /**
@@ -48,7 +157,6 @@ public class AddEmployee extends javax.swing.JFrame {
 
         jButton2.setText("jButton2");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -78,6 +186,11 @@ public class AddEmployee extends javax.swing.JFrame {
 
         createButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/save.png"))); // NOI18N
         createButton.setText("Create");
+        createButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -145,6 +258,16 @@ public class AddEmployee extends javax.swing.JFrame {
     private void IDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_IDActionPerformed
+
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+        // TODO add your handling code here:
+        
+        String employeeFirstName=firstName.getText().trim();
+        String employeeLastName=lastName.getText().trim();
+        String employeeID=ID.getText().trim();
+        
+        
+    }//GEN-LAST:event_createButtonActionPerformed
 
     /**
      * @param args the command line arguments
