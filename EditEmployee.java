@@ -57,22 +57,7 @@ public class EditEmployee extends javax.swing.JFrame {
         }
 
         
-//     try{
-//         
-//       EmployeeCB.setSelectedIndex(0);
-//
-//     }
-//     catch(IllegalArgumentException e){
-//         
-//        JOptionPane pane= new JOptionPane();
-//        pane.setMessageType(JOptionPane.PLAIN_MESSAGE);
-//        pane.setMessage("NO employees found to edit");
-//        
-//         JDialog dialog= pane.createDialog(null,"Message");
-//         dialog.setVisible(true);
-//         new EditEmployee().setVisible(false);
-//         dialog.setVisible(false);
-//     }
+
 
        
 
@@ -351,7 +336,7 @@ public class EditEmployee extends javax.swing.JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // TODO add your handling code here:
+     // TODO add your handling code here:
      int index=EmployeeCB.getSelectedIndex();
      employees.remove(index);
      saveEmployeesToFile();
