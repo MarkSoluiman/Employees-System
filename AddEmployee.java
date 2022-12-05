@@ -25,6 +25,21 @@ public class AddEmployee extends javax.swing.JFrame {
         
         jobs=new ArrayList<>();
         employees=new ArrayList<>();
+        
+        populateEmployeesArrayList();
+        populateJobsArrayList();
+        
+        
+       String [] jobsArray=new String [jobs.size()];
+      
+       for (int i=0;i<jobs.size();i++){
+           jobsArray[i]=jobs.get(i).getName()+", $:"+jobs.get(i).getSalary();
+       }
+                
+       JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(jobsArray));
+
+        
+        
                 
     }
     
@@ -107,7 +122,7 @@ public class AddEmployee extends javax.swing.JFrame {
     }
     
     //This method takes each employee from the employees arraylist
-    //and puts it into the employees data fil
+    //and puts it into the employees data file
     public void saveEmployeesToFile(){
         
         try{
@@ -175,6 +190,11 @@ public class AddEmployee extends javax.swing.JFrame {
         jLabel4.setText("Select Job:");
 
         JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        JobCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JobCBActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Staff ID:");
 
@@ -266,8 +286,30 @@ public class AddEmployee extends javax.swing.JFrame {
         String employeeLastName=lastName.getText().trim();
         String employeeID=ID.getText().trim();
         
+        if(employeeFirstName.isEmpty()||employeeLastName.isEmpty()||employeeID.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Please fill out the required fields!");
+        }
+        else{
+            int index=JobCB.getSelectedIndex();
+            Job job=jobs.get(index);
+            int employeeIDNum=Integer.parseInt(employeeID);
+            Employee employee=new Employee(employeeFirstName, employeeLastName, job,employeeIDNum );
+            employees.add(employee);
+            saveEmployeesToFile();
+            JOptionPane.showMessageDialog(null, "Employee added successfully!");
+            firstName.setText("");
+            lastName.setText("");
+            ID.setText("");
+            
+            
+        }
+        
         
     }//GEN-LAST:event_createButtonActionPerformed
+
+    private void JobCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JobCBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JobCBActionPerformed
 
     /**
      * @param args the command line arguments

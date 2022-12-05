@@ -8,13 +8,146 @@ package employeessystem;
  *
  * @author marka
  */
+
+import java.io.*;
+import javax.swing.JOptionPane;
+import java.util.*;
+import javax.swing.JDialog;
+
 public class EditEmployee extends javax.swing.JFrame {
 
+    
+     ArrayList<Job> jobs;
+    ArrayList<Employee> employees;
     /**
      * Creates new form EditEmployee
      */
     public EditEmployee() {
         initComponents();
+        
+         jobs=new ArrayList<>();
+        employees=new ArrayList<>();
+        
+        populateEmployeesArrayList();
+        populateJobsArrayList();
+        
+        String[] employeesStringArray=new String[employees.size()];
+        String[] jobsStringArray=new String[jobs.size()];
+        
+        for(int i=0;i<employees.size();i++){
+            employeesStringArray[i]=employees.get(i).getLastName()+" "+employees.get(i).getSaffID(); 
+        }
+        
+        for(int i=0;i<jobs.size();i++){
+            jobsStringArray[i]=jobs.get(i).getName();
+        }
+
+        EmployeeCB.setModel(new javax.swing.DefaultComboBoxModel<>(employeesStringArray));
+        JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(jobsStringArray));
+        
+        if(!employees.isEmpty()){
+            EmployeeCB.setSelectedIndex(0);
+        }
+        else{
+            
+        EmployeeCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No employees were found" }));
+        firstName.setEditable(false);
+        lastName.setEditable(false);
+
+        }
+
+        
+//     try{
+//         
+//       EmployeeCB.setSelectedIndex(0);
+//
+//     }
+//     catch(IllegalArgumentException e){
+//         
+//        JOptionPane pane= new JOptionPane();
+//        pane.setMessageType(JOptionPane.PLAIN_MESSAGE);
+//        pane.setMessage("NO employees found to edit");
+//        
+//         JDialog dialog= pane.createDialog(null,"Message");
+//         dialog.setVisible(true);
+//         new EditEmployee().setVisible(false);
+//         dialog.setVisible(false);
+//     }
+
+       
+
+
+    }
+    
+     public void populateJobsArrayList(){
+        try{
+              FileInputStream file=new FileInputStream("Jobs.dat");
+              ObjectInputStream inputFile=new ObjectInputStream(file);
+              
+              boolean endOfFile=false;
+              
+              while(!endOfFile){
+                  try{
+                      jobs.add((Job)(inputFile.readObject()));
+                  }
+                  catch(EOFException e){
+                      endOfFile=true;
+                  }
+                  catch(Exception f){
+                      JOptionPane.showMessageDialog(null, f.getMessage());
+                  }
+              }
+
+        }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+
+        }
+    }
+    
+    public void populateEmployeesArrayList(){
+        try{
+          FileInputStream file=new FileInputStream("employees.dat");
+          ObjectInputStream inputfile=new ObjectInputStream(file); 
+          
+          boolean endOfFile=false;
+          
+          while(!endOfFile){
+              try{
+                  
+                  employees.add((Employee)inputfile.readObject());
+              }catch(EOFException e){
+                  endOfFile=true;
+              }
+              catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage());
+
+              }
+          }
+          inputfile.close();
+        }
+        
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    
+        public void saveEmployeesToFile(){
+        
+        try{
+            FileOutputStream file=new FileOutputStream("employees.dat");
+            ObjectOutputStream outputFile=new ObjectOutputStream(file);
+            
+            for(Employee employee:employees){
+                outputFile.writeObject(employee);
+            }
+            outputFile.close();
+        }
+        catch(IOException e){
+         JOptionPane.showMessageDialog(null, e.getMessage());
+
+        }
+        
     }
 
     /**
@@ -56,6 +189,11 @@ public class EditEmployee extends javax.swing.JFrame {
         jLabel6.setText("Staff Number:");
 
         EmployeeCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        EmployeeCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EmployeeCBActionPerformed(evt);
+            }
+        });
 
         lastName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -67,12 +205,27 @@ public class EditEmployee extends javax.swing.JFrame {
 
         ID.setEditable(false);
         ID.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        ID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IDActionPerformed(evt);
+            }
+        });
 
         saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/save.png"))); // NOI18N
         saveButton.setText("Save Changes");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
         deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/exit.png"))); // NOI18N
         deleteButton.setText("Delete ");
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -142,6 +295,75 @@ public class EditEmployee extends javax.swing.JFrame {
     private void lastNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_lastNameActionPerformed
+
+    private void EmployeeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmployeeCBActionPerformed
+        // TODO add your handling code here:
+        
+        
+        int index=EmployeeCB.getSelectedIndex();
+        String idString=Integer.toString(employees.get(index).getSaffID());
+        firstName.setText(employees.get(index).getFirstName());
+        lastName.setText(employees.get(index).getLastName());
+        ID.setText(idString);
+        int jobIndex=0;
+        Job job=employees.get(index).getJob();
+        
+        for(int i=0;i<jobs.size();i++){
+            if(jobs.get(i).equals(job)){
+                jobIndex=i;
+                break;
+            }
+        }
+        
+        JobCB.setSelectedIndex(jobIndex);
+        
+        
+        
+        
+        
+    }//GEN-LAST:event_EmployeeCBActionPerformed
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        // TODO add your handling code here:
+        
+        String employeeFirstName=firstName.getText().trim();
+        String employeeLastName=lastName.getText().trim();
+        if(employeeFirstName.isEmpty()||employeeLastName.isEmpty()){
+           JOptionPane.showMessageDialog(null, "Please fill all the required fields!");
+           
+        }
+        else{
+        int index=EmployeeCB.getSelectedIndex();
+        employees.get(index).setFirstName(employeeFirstName);
+        employees.get(index).setLastName(employeeLastName);
+        Job job=jobs.get(JobCB.getSelectedIndex());
+        employees.get(index).setJob(job);
+        
+        saveEmployeesToFile();
+        JOptionPane.showMessageDialog(null, "successfully updated");
+        
+        
+        }
+     
+        
+        
+        
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        // TODO add your handling code here:
+     int index=EmployeeCB.getSelectedIndex();
+     employees.remove(index);
+     saveEmployeesToFile();
+     JOptionPane.showMessageDialog(null, "Successfully deleted");
+     
+
+        
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void IDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_IDActionPerformed
 
     /**
      * @param args the command line arguments
