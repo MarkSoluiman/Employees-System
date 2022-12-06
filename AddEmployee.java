@@ -47,7 +47,7 @@ public class AddEmployee extends javax.swing.JFrame {
     // and puts them in the jobs arraylist
     public void populateJobsArrayList(){
         try{
-              FileInputStream file=new FileInputStream("Jobs.dat");
+              FileInputStream file=new FileInputStream("jobs.dat");
               ObjectInputStream inputFile=new ObjectInputStream(file);
               
               boolean endOfFile=false;
@@ -63,7 +63,8 @@ public class AddEmployee extends javax.swing.JFrame {
                       JOptionPane.showMessageDialog(null, f.getMessage());
                   }
               }
-
+                
+              inputFile.close();
         }
         catch(IOException e){
             JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
@@ -103,7 +104,7 @@ public class AddEmployee extends javax.swing.JFrame {
     public void saveJobsToFile(){
         
         try{
-             FileOutputStream file=new FileOutputStream("employees.dat");
+             FileOutputStream file=new FileOutputStream("jobs.dat");
               ObjectOutputStream outputFile=new ObjectOutputStream(file); 
               
               for (Job job:jobs){
