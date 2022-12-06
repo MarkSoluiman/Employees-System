@@ -37,10 +37,26 @@ public class AddEmployee extends javax.swing.JFrame {
        }
                 
        JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(jobsArray));
+       
+       if(jobs.isEmpty()){
+           firstName.setEditable(false);
+           lastName.setEditable(false);
+           ID.setEditable(false);
+           JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No jobs found" }));
+           createButton.setEnabled(false);
+
+           
+       }
 
         
         
                 
+    }
+    
+    public void setBlanckTextFields(){
+        firstName.setText("");
+        lastName.setText("");
+        ID.setText("");
     }
     
     //This method reads every job from the jobs data file and 
@@ -141,6 +157,18 @@ public class AddEmployee extends javax.swing.JFrame {
         }
         
     }
+    
+   public static boolean isInteger(String s) {
+    try { 
+        Integer.parseInt(s); 
+    } catch(NumberFormatException e) { 
+        return false; 
+    } catch(NullPointerException e) {
+        return false;
+    }
+    // only got here if we didn't return false
+    return true;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -286,10 +314,31 @@ public class AddEmployee extends javax.swing.JFrame {
         String employeeFirstName=firstName.getText().trim();
         String employeeLastName=lastName.getText().trim();
         String employeeID=ID.getText().trim();
+        boolean invalidID=false;
+        
+        if(!isInteger(employeeID)){
+         JOptionPane.showMessageDialog(null, "ID has to be only in whole numbers");
+         ID.setText("");
+
+        }
+        
+        else{
+            for(Employee employee:employees){
+            if(Integer.parseInt(employeeID)==employee.getSaffID()){
+                invalidID=true;
+                break;
+            }
+        }
+        
         
         if(employeeFirstName.isEmpty()||employeeLastName.isEmpty()||employeeID.isEmpty()){
             JOptionPane.showMessageDialog(null, "Please fill out the required fields!");
         }
+        else if(invalidID){
+            JOptionPane.showMessageDialog(null, "ID is already taken, please enter another id");
+            ID.setText("");
+        }
+        
         else{
             int index=JobCB.getSelectedIndex();
             Job job=jobs.get(index);
@@ -298,12 +347,13 @@ public class AddEmployee extends javax.swing.JFrame {
             employees.add(employee);
             saveEmployeesToFile();
             JOptionPane.showMessageDialog(null, "Employee added successfully!");
-            firstName.setText("");
-            lastName.setText("");
-            ID.setText("");
+            setBlanckTextFields();
             
             
         }
+        }
+        
+ 
         
         
     }//GEN-LAST:event_createButtonActionPerformed
@@ -346,6 +396,8 @@ public class AddEmployee extends javax.swing.JFrame {
             }
         });
     }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField ID;

@@ -91,6 +91,11 @@ public class EditJob extends javax.swing.JFrame {
        
         
     }
+    
+    public void setBlanckTextFields(){
+        jobName.setText("");
+        Salary.setText("");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -231,6 +236,7 @@ public class EditJob extends javax.swing.JFrame {
         saveJobsToFile();
         
         JOptionPane.showMessageDialog(null, "Job edited successfully !");
+        setBlanckTextFields();
         
         
         
@@ -240,11 +246,18 @@ public class EditJob extends javax.swing.JFrame {
 
     private void jobsCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobsCBActionPerformed
         // TODO add your handling code here:
-        
-        int intdex= jobsCB.getSelectedIndex();
+        try{
+         int intdex= jobsCB.getSelectedIndex();
         
         Salary.setText(jobs.get(intdex).getSalary()+"");
         jobName.setText(jobs.get(intdex).getName());
+        }
+        catch(IndexOutOfBoundsException e){
+          //JOptionPane.showMessageDialog(null, "Job not found");
+           JOptionPane.showMessageDialog(null, "Job not found","Message",JOptionPane.ERROR_MESSAGE);
+           setBlanckTextFields();
+        }
+  
         
         
         
@@ -259,6 +272,7 @@ public class EditJob extends javax.swing.JFrame {
         saveJobsToFile();
         
        JOptionPane.showMessageDialog(null, "Job deleted successfully !");
+       setBlanckTextFields();
 
         
         

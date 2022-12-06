@@ -68,6 +68,7 @@ public class EditEmployee extends javax.swing.JFrame {
         try{
               FileInputStream file=new FileInputStream("Jobs.dat");
               ObjectInputStream inputFile=new ObjectInputStream(file);
+             
               
               boolean endOfFile=false;
               
@@ -187,6 +188,11 @@ public class EditEmployee extends javax.swing.JFrame {
         });
 
         JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        JobCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JobCBActionPerformed(evt);
+            }
+        });
 
         ID.setEditable(false);
         ID.setHorizontalAlignment(javax.swing.JTextField.LEFT);
@@ -284,8 +290,8 @@ public class EditEmployee extends javax.swing.JFrame {
     private void EmployeeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmployeeCBActionPerformed
         // TODO add your handling code here:
         
-        
-        int index=EmployeeCB.getSelectedIndex();
+        try{
+          int index=EmployeeCB.getSelectedIndex();
         String idString=Integer.toString(employees.get(index).getSaffID());
         firstName.setText(employees.get(index).getFirstName());
         lastName.setText(employees.get(index).getLastName());
@@ -301,6 +307,17 @@ public class EditEmployee extends javax.swing.JFrame {
         }
         
         JobCB.setSelectedIndex(jobIndex);
+        }
+        catch(IndexOutOfBoundsException e){
+          //JOptionPane.showMessageDialog(null,"Employee not found" );
+          JOptionPane.showMessageDialog(null, "Employee not found","Message",JOptionPane.ERROR_MESSAGE);
+
+           firstName.setText("");
+           lastName.setText("");
+           ID.setText("");
+           
+        }
+      
         
         
         
@@ -341,6 +358,10 @@ public class EditEmployee extends javax.swing.JFrame {
      employees.remove(index);
      saveEmployeesToFile();
      JOptionPane.showMessageDialog(null, "Successfully deleted");
+
+
+     
+     
      
 
         
@@ -349,6 +370,10 @@ public class EditEmployee extends javax.swing.JFrame {
     private void IDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_IDActionPerformed
+
+    private void JobCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JobCBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JobCBActionPerformed
 
     /**
      * @param args the command line arguments
