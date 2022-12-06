@@ -9,13 +9,92 @@ package employeessystem;
  *
  * @author marka
  */
+
+import java.io.*;
+import javax.swing.JOptionPane;
+import java.util.*;
+
 public class EditJob extends javax.swing.JFrame {
 
     /**
      * Creates new form EditJob
      */
+    
+     ArrayList<Job> jobs;
     public EditJob() {
         initComponents();
+        
+        jobs=new ArrayList<>();
+        populateJobsArrayList();
+        String [] jobsArrayString= new String[jobs.size()];
+      
+        for(int i=0;i <jobs.size();i++){
+            jobsArrayString[i]=jobs.get(i).getName();
+        }
+        
+        jobsCB.setModel(new javax.swing.DefaultComboBoxModel<>( jobsArrayString));
+        
+        if(jobs.isEmpty()){
+        jobsCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No jobs found to edit" }));
+        Salary.setEditable(false);
+
+        }
+        else{
+            jobsCB.setSelectedIndex(0);
+        }
+        
+    }
+    
+    public void populateJobsArrayList(){
+        try{
+              FileInputStream file=new FileInputStream("Jobs.dat");
+              ObjectInputStream inputFile=new ObjectInputStream(file);
+              
+              boolean endOfFile=false;
+              
+              while(!endOfFile){
+                  try{
+                      jobs.add((Job)(inputFile.readObject()));
+                  }
+                  catch(EOFException e){
+                      endOfFile=true;
+                  }
+                  catch(Exception f){
+                      JOptionPane.showMessageDialog(null, f.getMessage());
+                  }
+              }
+
+        }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+
+        }
+    }
+    
+    public void saveJobsToFile(){
+        
+        try{
+             FileOutputStream file=new FileOutputStream("jobs.dat");
+              ObjectOutputStream outputFile=new ObjectOutputStream(file); 
+              
+              for (Job job:jobs){
+                  outputFile.writeObject(job);
+              }
+              outputFile.close();
+        }
+        
+        catch(IOException e){
+           JOptionPane.showMessageDialog(null, e.getMessage());
+
+        }
+       
+       
+        
+    }
+    
+    public void setBlanckTextFields(){
+        jobName.setText("");
+        Salary.setText("");
     }
 
     /**
@@ -32,13 +111,13 @@ public class EditJob extends javax.swing.JFrame {
         jTextField3 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jobsCB = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jobName = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        Salary = new javax.swing.JTextField();
+        EditButton = new javax.swing.JButton();
+        DeleteButton = new javax.swing.JButton();
 
         jLabel4.setText("jLabel4");
 
@@ -51,25 +130,40 @@ public class EditJob extends javax.swing.JFrame {
 
         jLabel2.setText("Choose Job: ");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jobsCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jobsCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jobsCBActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Job name:");
 
-        jTextField1.setEditable(false);
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jobName.setEditable(false);
+        jobName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jobNameActionPerformed(evt);
             }
         });
 
         jLabel5.setText("Job Salary:");
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/edit.png"))); // NOI18N
-        jButton1.setText("Edit");
+        EditButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/edit.png"))); // NOI18N
+        EditButton.setText("Edit");
+        EditButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EditButtonActionPerformed(evt);
+            }
+        });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/exit.png"))); // NOI18N
-        jButton2.setText("Delete Job");
-        jButton2.setActionCommand("");
+        DeleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/exit.png"))); // NOI18N
+        DeleteButton.setText("Delete Job");
+        DeleteButton.setActionCommand("");
+        DeleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeleteButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -90,15 +184,15 @@ public class EditJob extends javax.swing.JFrame {
                                             .addComponent(jLabel5))))
                                 .addGap(58, 58, 58)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox1, 0, 191, Short.MAX_VALUE)
-                                    .addComponent(jTextField1)
-                                    .addComponent(jTextField4)))
+                                    .addComponent(jobsCB, 0, 191, Short.MAX_VALUE)
+                                    .addComponent(jobName)
+                                    .addComponent(Salary)))
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(49, 49, 49))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(EditButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(26, 26, 26)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(DeleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -109,28 +203,82 @@ public class EditJob extends javax.swing.JFrame {
                 .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jobsCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jobName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Salary, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(DeleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(EditButton, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jobNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobNameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_jobNameActionPerformed
+
+    private void EditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditButtonActionPerformed
+        // TODO add your handling code here:
+        
+        String jobSalary=Salary.getText().trim();
+        
+        int index=jobsCB.getSelectedIndex();
+        jobs.get(index).setSalary(Double.parseDouble(jobSalary));
+        saveJobsToFile();
+        
+        JOptionPane.showMessageDialog(null, "Job edited successfully !");
+        setBlanckTextFields();
+        
+        
+        
+        
+        
+    }//GEN-LAST:event_EditButtonActionPerformed
+
+    private void jobsCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobsCBActionPerformed
+        // TODO add your handling code here:
+        try{
+         int intdex= jobsCB.getSelectedIndex();
+        
+        Salary.setText(jobs.get(intdex).getSalary()+"");
+        jobName.setText(jobs.get(intdex).getName());
+        }
+        catch(IndexOutOfBoundsException e){
+          //JOptionPane.showMessageDialog(null, "Job not found");
+           JOptionPane.showMessageDialog(null, "Job not found","Message",JOptionPane.ERROR_MESSAGE);
+           setBlanckTextFields();
+        }
+  
+        
+        
+        
+        
+    }//GEN-LAST:event_jobsCBActionPerformed
+
+    private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
+        // TODO add your handling code here:
+        
+        int index=jobsCB.getSelectedIndex();
+        jobs.remove(index);
+        saveJobsToFile();
+        
+       JOptionPane.showMessageDialog(null, "Job deleted successfully !");
+       setBlanckTextFields();
+
+        
+        
+        
+        
+    }//GEN-LAST:event_DeleteButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -168,17 +316,17 @@ public class EditJob extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton DeleteButton;
+    private javax.swing.JButton EditButton;
+    private javax.swing.JTextField Salary;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jobName;
+    private javax.swing.JComboBox<String> jobsCB;
     // End of variables declaration//GEN-END:variables
 }
