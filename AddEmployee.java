@@ -29,15 +29,17 @@ public class AddEmployee extends javax.swing.JFrame {
         populateEmployeesArrayList();
         populateJobsArrayList();
         
-        
+        //A string array to store the jobs names in them
        String [] jobsArray=new String [jobs.size()];
       
        for (int i=0;i<jobs.size();i++){
            jobsArray[i]=jobs.get(i).getName()+", $:"+jobs.get(i).getSalary();
        }
-                
+        //Used the Jobs string array in the combobox         
        JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(jobsArray));
        
+       //If the jobs array is empty, we basically make the addEmployee frame
+       //unusable.
        if(jobs.isEmpty()){
            firstName.setEditable(false);
            lastName.setEditable(false);
@@ -118,6 +120,9 @@ public class AddEmployee extends javax.swing.JFrame {
         }
     }
     
+    //Reads every Employee from the employees.dat file and put them in the 
+    //employees array as Employee object
+    
     public void populateEmployeesArrayList(){
         try{
           FileInputStream file=new FileInputStream("employees.dat");
@@ -188,17 +193,8 @@ public class AddEmployee extends javax.swing.JFrame {
         
     }
     
-   public static boolean isInteger(String s) {
-    try { 
-        Integer.parseInt(s); 
-    } catch(NumberFormatException e) { 
-        return false; 
-    } catch(NullPointerException e) {
-        return false;
-    }
-    // only got here if we didn't return false
-    return true;
-}
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -345,36 +341,36 @@ public class AddEmployee extends javax.swing.JFrame {
         String employeeLastName=lastName.getText().trim();
         String employeeID=ID.getText().trim();
         boolean invalidID=false;
-    
-        if(!isInteger(employeeID) || !isPositiveInteger(employeeID)){
-         JOptionPane.showMessageDialog(null, "ID has to be only in whole positive numbers");
-         ID.setText("");
-        }
         
-        else{
-            for(Employee employee:employees){
+        
+        //Check if the id that was given is already taken by another employee
+        //(No duplicate IDs allowed)
+         for(Employee employee:employees){
             if(Integer.parseInt(employeeID)==employee.getSaffID()){
                 invalidID=true;
                 break;
             }
         }
-        
-        
-        if(employeeFirstName.isEmpty()||employeeLastName.isEmpty()||employeeID.isEmpty()){
-            JOptionPane.showMessageDialog(null, "Please fill out the required fields!");
+    
+        // Checking if the user has input valid data to add a new employee
+        if(!isPositiveInteger(employeeID) && !employeeID.isEmpty()){
+         JOptionPane.showMessageDialog(null, "ID has to be only in whole positive numbers");
+         ID.setText("");
+        }
+        else if(employeeFirstName.isEmpty()||employeeLastName.isEmpty()||employeeID.isEmpty()){
+             JOptionPane.showMessageDialog(null, "Please fill out the required fields!");
         }
         else if(invalidID){
             JOptionPane.showMessageDialog(null, "ID is already taken, please enter another id");
             ID.setText("");
         }
-        else{
-            
-        
-        
-        if(containsNumbers(employeeFirstName)||containsNumbers(employeeLastName)){
+        else if (containsNumbers(employeeFirstName)||containsNumbers(employeeLastName)){
             JOptionPane.showMessageDialog(null, "First and last names can't contain numbers");
         }
-           else{
+        
+        //Do this when all the given data are valid to add a new employee
+        else{
+
             int index=JobCB.getSelectedIndex();
             Job job=jobs.get(index);
             int employeeIDNum=Integer.parseInt(employeeID);
@@ -383,13 +379,15 @@ public class AddEmployee extends javax.swing.JFrame {
             saveEmployeesToFile();
             JOptionPane.showMessageDialog(null, "Employee added successfully!");
             setBlanckTextFields();
-            
-            
-        }
+
         }
         
 
-        }
+        
+    
+
+    
+    
         
  
         
