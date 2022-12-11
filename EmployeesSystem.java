@@ -15,6 +15,7 @@ public class EmployeesSystem {
      */
     public static void main(String[] args) {
         new MainMenu().setVisible(true);
+
     }
     
 }

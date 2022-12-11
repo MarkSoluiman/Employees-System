@@ -49,6 +49,36 @@ public class EditJob extends javax.swing.JFrame {
         
     }
     
+        //Returns true if text contains numbers,false otherwise.
+    
+        public boolean containsNumbers(String s){
+        return (s.matches(".*[0-9].*"));
+    }
+        
+       //Returns true if text contains a positive number, false otherwise.
+        
+     public boolean isPositiveInteger(String s) {
+
+    if (s == null) {
+        return false;
+    }
+    int length = s.length();
+    if (length == 0) {
+        return false;
+    }
+    if (s.charAt(0) == '-') {
+            return false;
+    }
+    for (int i = 0; i < length; i++) {
+        char c = s.charAt(i);
+        boolean isDigit = (c >= '0' && c <= '9');
+        if (!isDigit) {
+            return false;
+        }
+    }
+    return true;
+}
+    
     public void populateEmployeesArrayList(){
         try{
             FileInputStream file=new FileInputStream("employees.dat");
@@ -275,12 +305,19 @@ public class EditJob extends javax.swing.JFrame {
         
         String jobSalary=Salary.getText().trim();
         
-        int index=jobsCB.getSelectedIndex();
+        if(!containsNumbers(jobSalary)|| !isPositiveInteger(jobSalary)){
+            JOptionPane.showMessageDialog(null, "The job salary has to be only in positive numbers");
+        }
+        else{
+         int index=jobsCB.getSelectedIndex();
         jobs.get(index).setSalary(Double.parseDouble(jobSalary));
         saveJobsToFile();
         
         JOptionPane.showMessageDialog(null, "Job edited successfully !");
         setBlanckTextFields();
+        }
+        
+      
         
         
         
@@ -297,7 +334,7 @@ public class EditJob extends javax.swing.JFrame {
         jobName.setText(jobs.get(intdex).getName());
         }
         catch(IndexOutOfBoundsException e){
-          //JOptionPane.showMessageDialog(null, "Job not found");
+         
            JOptionPane.showMessageDialog(null, "Job not found","Message",JOptionPane.ERROR_MESSAGE);
            setBlanckTextFields();
         }

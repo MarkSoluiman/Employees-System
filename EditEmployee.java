@@ -64,6 +64,37 @@ public class EditEmployee extends javax.swing.JFrame {
 
     }
     
+    
+        //Returns true if text contains numbers,false otherwise.
+    
+        public boolean containsNumbers(String s){
+        return (s.matches(".*[0-9].*"));
+    }
+        
+       //Returns true if text contains a positive number, false otherwise.
+        
+     public boolean isPositiveInteger(String s) {
+
+    if (s == null) {
+        return false;
+    }
+    int length = s.length();
+    if (length == 0) {
+        return false;
+    }
+    if (s.charAt(0) == '-') {
+            return false;
+    }
+    for (int i = 0; i < length; i++) {
+        char c = s.charAt(i);
+        boolean isDigit = (c >= '0' && c <= '9');
+        if (!isDigit) {
+            return false;
+        }
+    }
+    return true;
+}
+    
      public void populateJobsArrayList(){
         try{
               FileInputStream file=new FileInputStream("Jobs.dat");
@@ -335,6 +366,9 @@ public class EditEmployee extends javax.swing.JFrame {
         if(employeeFirstName.isEmpty()||employeeLastName.isEmpty()){
            JOptionPane.showMessageDialog(null, "Please fill all the required fields!");
            
+        }
+        else if (containsNumbers(employeeLastName)||containsNumbers(employeeFirstName)){
+            JOptionPane.showMessageDialog(null, "First and last names can't contain numbers");
         }
         else{
         int index=EmployeeCB.getSelectedIndex();
