@@ -11,7 +11,7 @@ package employeessystem;
  */
 
 import java.io.*;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import java.util.*;
 
 public class EditJob extends javax.swing.JFrame {
@@ -21,11 +21,15 @@ public class EditJob extends javax.swing.JFrame {
      */
     
      ArrayList<Job> jobs;
+     ArrayList<Employee>employees;
     public EditJob() {
         initComponents();
         
         jobs=new ArrayList<>();
+        employees=new ArrayList<>();
         populateJobsArrayList();
+        populateEmployeesArrayList();
+        saveEmployeesToFile();
         String [] jobsArrayString= new String[jobs.size()];
       
         for(int i=0;i <jobs.size();i++){
@@ -45,9 +49,82 @@ public class EditJob extends javax.swing.JFrame {
         
     }
     
+        //Returns true if text contains numbers,false otherwise.
+    
+        public boolean containsNumbers(String s){
+        return (s.matches(".*[0-9].*"));
+    }
+        
+       //Returns true if text contains a positive number, false otherwise.
+        
+     public boolean isPositiveInteger(String s) {
+
+    if (s == null) {
+        return false;
+    }
+    int length = s.length();
+    if (length == 0) {
+        return false;
+    }
+    if (s.charAt(0) == '-') {
+            return false;
+    }
+    for (int i = 0; i < length; i++) {
+        char c = s.charAt(i);
+        boolean isDigit = (c >= '0' && c <= '9');
+        if (!isDigit) {
+            return false;
+        }
+    }
+    return true;
+}
+    
+    public void populateEmployeesArrayList(){
+        try{
+            FileInputStream file=new FileInputStream("employees.dat");
+            ObjectInputStream inputFile=new ObjectInputStream(file);
+            boolean endOfFile=false;
+            while(!endOfFile){
+                try{
+                    employees.add((Employee)(inputFile.readObject()));
+                    
+                }
+                catch(EOFException e){
+                    endOfFile=true;
+                }
+                catch(Exception f){
+                JOptionPane.showMessageDialog(null, f.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+
+                }
+            }
+            inputFile.close();
+            
+        }
+        catch(IOException e){
+        JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+
+        }
+    }
+    
+    public void saveEmployeesToFile(){
+        try{
+            FileOutputStream file=new FileOutputStream("employees.dat");
+            ObjectOutputStream outputfile=new ObjectOutputStream(file);
+            for(Employee employee:employees){
+                outputfile.writeObject(employee);
+            }
+    
+    }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+        }
+        
+        
+    }
+    
     public void populateJobsArrayList(){
         try{
-              FileInputStream file=new FileInputStream("Jobs.dat");
+              FileInputStream file=new FileInputStream("jobs.dat");
               ObjectInputStream inputFile=new ObjectInputStream(file);
               
               boolean endOfFile=false;
@@ -157,7 +234,7 @@ public class EditJob extends javax.swing.JFrame {
         });
 
         DeleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/employeessystem/exit.png"))); // NOI18N
-        DeleteButton.setText("Delete Job");
+        DeleteButton.setText("Delete");
         DeleteButton.setActionCommand("");
         DeleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,19 +247,16 @@ public class EditJob extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(41, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(3, 3, 3)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel5))))
-                                .addGap(58, 58, 58)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(23, 23, 23)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jobsCB, 0, 191, Short.MAX_VALUE)
                                     .addComponent(jobName)
@@ -191,9 +265,9 @@ public class EditJob extends javax.swing.JFrame {
                         .addGap(49, 49, 49))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(EditButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
+                        .addGap(18, 18, 18)
                         .addComponent(DeleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addGap(45, 45, 45))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,12 +305,19 @@ public class EditJob extends javax.swing.JFrame {
         
         String jobSalary=Salary.getText().trim();
         
-        int index=jobsCB.getSelectedIndex();
+        if(!containsNumbers(jobSalary)|| !isPositiveInteger(jobSalary)){
+            JOptionPane.showMessageDialog(null, "The job salary has to be only in positive numbers");
+        }
+        else{
+         int index=jobsCB.getSelectedIndex();
         jobs.get(index).setSalary(Double.parseDouble(jobSalary));
         saveJobsToFile();
         
         JOptionPane.showMessageDialog(null, "Job edited successfully !");
         setBlanckTextFields();
+        }
+        
+      
         
         
         
@@ -253,7 +334,7 @@ public class EditJob extends javax.swing.JFrame {
         jobName.setText(jobs.get(intdex).getName());
         }
         catch(IndexOutOfBoundsException e){
-          //JOptionPane.showMessageDialog(null, "Job not found");
+         
            JOptionPane.showMessageDialog(null, "Job not found","Message",JOptionPane.ERROR_MESSAGE);
            setBlanckTextFields();
         }
@@ -267,16 +348,31 @@ public class EditJob extends javax.swing.JFrame {
     private void DeleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteButtonActionPerformed
         // TODO add your handling code here:
         
+        
+        boolean takenJob=false;
         int index=jobsCB.getSelectedIndex();
+        for(Employee employee:employees){
+            if(jobs.get(index).getName().equalsIgnoreCase(employee.getJob().getName())){
+            takenJob=true;
+            break;
+            }
+        }
+        if(takenJob){
+            JOptionPane.showMessageDialog(null, "Job is taken by one or more employees");
+            
+        }
+        else{
         jobs.remove(index);
         saveJobsToFile();
         
        JOptionPane.showMessageDialog(null, "Job deleted successfully !");
        setBlanckTextFields();
+       
+       this.dispose();
+        }
+        
+  
 
-        
-        
-        
         
     }//GEN-LAST:event_DeleteButtonActionPerformed
 
@@ -310,7 +406,7 @@ public class EditJob extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new EditJob().setVisible(true);
+               new EditJob().setVisible(true);
             }
         });
     }

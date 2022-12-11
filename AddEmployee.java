@@ -53,6 +53,36 @@ public class AddEmployee extends javax.swing.JFrame {
                 
     }
     
+    //Returns true if text doesnt contain numbers, false otherwise.
+    
+    public boolean containsNumbers(String s){
+        return (s.matches(".*[0-9].*"));
+    }
+    
+    //Returns true if text is positive integer, false otherwise.
+    
+    public boolean isPositiveInteger(String s) {
+
+    if (s == null) {
+        return false;
+    }
+    int length = s.length();
+    if (length == 0) {
+        return false;
+    }
+    if (s.charAt(0) == '-') {
+            return false;
+    }
+    for (int i = 0; i < length; i++) {
+        char c = s.charAt(i);
+        boolean isDigit = (c >= '0' && c <= '9');
+        if (!isDigit) {
+            return false;
+        }
+    }
+    return true;
+}
+    
     public void setBlanckTextFields(){
         firstName.setText("");
         lastName.setText("");
@@ -315,11 +345,10 @@ public class AddEmployee extends javax.swing.JFrame {
         String employeeLastName=lastName.getText().trim();
         String employeeID=ID.getText().trim();
         boolean invalidID=false;
-        
-        if(!isInteger(employeeID)){
-         JOptionPane.showMessageDialog(null, "ID has to be only in whole numbers");
+    
+        if(!isInteger(employeeID) || !isPositiveInteger(employeeID)){
+         JOptionPane.showMessageDialog(null, "ID has to be only in whole positive numbers");
          ID.setText("");
-
         }
         
         else{
@@ -338,8 +367,14 @@ public class AddEmployee extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "ID is already taken, please enter another id");
             ID.setText("");
         }
-        
         else{
+            
+        
+        
+        if(containsNumbers(employeeFirstName)||containsNumbers(employeeLastName)){
+            JOptionPane.showMessageDialog(null, "First and last names can't contain numbers");
+        }
+           else{
             int index=JobCB.getSelectedIndex();
             Job job=jobs.get(index);
             int employeeIDNum=Integer.parseInt(employeeID);
@@ -351,6 +386,9 @@ public class AddEmployee extends javax.swing.JFrame {
             
             
         }
+        }
+        
+
         }
         
  
