@@ -322,8 +322,7 @@ public class EditEmployee extends javax.swing.JFrame {
 
     private void EmployeeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmployeeCBActionPerformed
         // TODO add your handling code here:
-        
-        try{
+try{
           int index=EmployeeCB.getSelectedIndex();
         String idString=Integer.toString(employees.get(index).getSaffID());
         firstName.setText(employees.get(index).getFirstName());
@@ -368,15 +367,7 @@ public class EditEmployee extends javax.swing.JFrame {
            ID.setText("");
            
         }
-        
-
-        
-        
-      
-        
-        
-        
-        
+    
         
     }//GEN-LAST:event_EmployeeCBActionPerformed
 
