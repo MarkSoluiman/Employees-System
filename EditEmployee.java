@@ -322,8 +322,7 @@ public class EditEmployee extends javax.swing.JFrame {
 
     private void EmployeeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmployeeCBActionPerformed
         // TODO add your handling code here:
-        
-        try{
+try{
           int index=EmployeeCB.getSelectedIndex();
         String idString=Integer.toString(employees.get(index).getSaffID());
         firstName.setText(employees.get(index).getFirstName());
@@ -339,8 +338,26 @@ public class EditEmployee extends javax.swing.JFrame {
             }
         }
         
-        JobCB.setSelectedIndex(jobIndex);
+          try{
+            JobCB.setSelectedIndex(jobIndex);
         }
+        
+        
+        
+        catch(IllegalArgumentException f){
+        JOptionPane.showMessageDialog(null, "Job not found","Message",JOptionPane.ERROR_MESSAGE);
+        deleteButton.setEnabled(false);
+        saveButton.setEnabled(false);
+        
+       
+
+        }
+        
+
+
+        }
+        
+        
         catch(IndexOutOfBoundsException e){
           //JOptionPane.showMessageDialog(null,"Employee not found" );
           JOptionPane.showMessageDialog(null, "Employee not found","Message",JOptionPane.ERROR_MESSAGE);
@@ -350,10 +367,8 @@ public class EditEmployee extends javax.swing.JFrame {
            ID.setText("");
            
         }
-      
         
-        
-        
+
         
         
     }//GEN-LAST:event_EmployeeCBActionPerformed
