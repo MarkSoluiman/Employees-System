@@ -66,11 +66,15 @@ public class AddJob extends javax.swing.JFrame {
             
             boolean endOfFile=false;
             
+            //While we didnt reach the end of the file, we add each job in the file
+            // to the jobs arraylist
+            
             while(!endOfFile){
                 try{
                     jobs.add((Job)inputFile.readObject());
                     
                 }
+                
                 //To catch end of file exception
                 catch(EOFException e){
                     endOfFile=true;
@@ -101,6 +105,8 @@ public class AddJob extends javax.swing.JFrame {
             FileOutputStream file=new FileOutputStream("jobs.dat");
             ObjectOutputStream outputFile=new ObjectOutputStream(file);
             
+            //for each job in the jobs arraylist, we write the job into the 
+            //jobs.dat file as a job object
             for(Job job:jobs){
                 outputFile.writeObject(job);
             }
@@ -207,6 +213,8 @@ public class AddJob extends javax.swing.JFrame {
         String name=jobName.getText().trim();
         String salaryString=jobSalary.getText().trim();
         
+        // Checking if the user has input valid data to add a new job
+        
         if (name.isEmpty()|| salaryString.isEmpty()){
             JOptionPane.showMessageDialog(null, "Please enter all fields!");
         }
@@ -216,6 +224,8 @@ public class AddJob extends javax.swing.JFrame {
         else if (!isPositiveInteger(salaryString)){
             JOptionPane.showMessageDialog(null, "The salary has to be in positive numbers");
         }
+        
+        //Do this when all the given data are valid to add a new job
         else{
             double salary=Double.parseDouble(salaryString);
             Job job= new Job(name, salary);

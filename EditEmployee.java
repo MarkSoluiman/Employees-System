@@ -8,7 +8,6 @@ package employeessystem;
  *
  * @author marka
  */
-
 import java.io.*;
 import javax.swing.JOptionPane;
 import java.util.*;
@@ -16,155 +15,137 @@ import javax.swing.JDialog;
 
 public class EditEmployee extends javax.swing.JFrame {
 
-    
-     ArrayList<Job> jobs;
+    ArrayList<Job> jobs;
     ArrayList<Employee> employees;
+
     /**
      * Creates new form EditEmployee
      */
     public EditEmployee() {
         initComponents();
-        
-         jobs=new ArrayList<>();
-        employees=new ArrayList<>();
-        
+
+        jobs = new ArrayList<>();
+        employees = new ArrayList<>();
+
         populateEmployeesArrayList();
         populateJobsArrayList();
-        
-        String[] employeesStringArray=new String[employees.size()];
-        String[] jobsStringArray=new String[jobs.size()];
-        
-        for(int i=0;i<employees.size();i++){
-            employeesStringArray[i]=employees.get(i).getLastName()+" "+employees.get(i).getSaffID(); 
+
+        String[] employeesStringArray = new String[employees.size()];
+        String[] jobsStringArray = new String[jobs.size()];
+
+        for (int i = 0; i < employees.size(); i++) {
+            employeesStringArray[i] = employees.get(i).getLastName() + " " + employees.get(i).getSaffID();
         }
-        
-        for(int i=0;i<jobs.size();i++){
-            jobsStringArray[i]=jobs.get(i).getName();
+
+        for (int i = 0; i < jobs.size(); i++) {
+            jobsStringArray[i] = jobs.get(i).getName();
         }
 
         EmployeeCB.setModel(new javax.swing.DefaultComboBoxModel<>(employeesStringArray));
         JobCB.setModel(new javax.swing.DefaultComboBoxModel<>(jobsStringArray));
-        
-        if(!employees.isEmpty()){
+
+        if (!employees.isEmpty()) {
             EmployeeCB.setSelectedIndex(0);
-        }
-        else{
-            
-        EmployeeCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No employees were found" }));
-        firstName.setEditable(false);
-        lastName.setEditable(false);
+        } else {
+
+            EmployeeCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"No employees were found"}));
+            firstName.setEditable(false);
+            lastName.setEditable(false);
 
         }
-
-        
-
-
-       
-
 
     }
-    
-    
-        //Returns true if text contains numbers,false otherwise.
-    
-        public boolean containsNumbers(String s){
+
+    //Returns true if text contains numbers,false otherwise.
+    public boolean containsNumbers(String s) {
         return (s.matches(".*[0-9].*"));
     }
-        
-       //Returns true if text contains a positive number, false otherwise.
-        
-     public boolean isPositiveInteger(String s) {
 
-    if (s == null) {
-        return false;
-    }
-    int length = s.length();
-    if (length == 0) {
-        return false;
-    }
-    if (s.charAt(0) == '-') {
-            return false;
-    }
-    for (int i = 0; i < length; i++) {
-        char c = s.charAt(i);
-        boolean isDigit = (c >= '0' && c <= '9');
-        if (!isDigit) {
+    //Returns true if text contains a positive number, false otherwise.
+    public boolean isPositiveInteger(String s) {
+
+        if (s == null) {
             return false;
         }
+        int length = s.length();
+        if (length == 0) {
+            return false;
+        }
+        if (s.charAt(0) == '-') {
+            return false;
+        }
+        for (int i = 0; i < length; i++) {
+            char c = s.charAt(i);
+            boolean isDigit = (c >= '0' && c <= '9');
+            if (!isDigit) {
+                return false;
+            }
+        }
+        return true;
     }
-    return true;
-}
-    
-     public void populateJobsArrayList(){
-        try{
-              FileInputStream file=new FileInputStream("Jobs.dat");
-              ObjectInputStream inputFile=new ObjectInputStream(file);
-             
-              
-              boolean endOfFile=false;
-              
-              while(!endOfFile){
-                  try{
-                      jobs.add((Job)(inputFile.readObject()));
-                  }
-                  catch(EOFException e){
-                      endOfFile=true;
-                  }
-                  catch(Exception f){
-                      JOptionPane.showMessageDialog(null, f.getMessage());
-                  }
-              }
 
-        }
-        catch(IOException e){
-            JOptionPane.showMessageDialog(null, e.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
+    public void populateJobsArrayList() {
+        try {
+            FileInputStream file = new FileInputStream("Jobs.dat");
+            ObjectInputStream inputFile = new ObjectInputStream(file);
+
+            boolean endOfFile = false;
+
+            while (!endOfFile) {
+                try {
+                    jobs.add((Job) (inputFile.readObject()));
+                } catch (EOFException e) {
+                    endOfFile = true;
+                } catch (Exception f) {
+                    JOptionPane.showMessageDialog(null, f.getMessage());
+                }
+            }
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Message", JOptionPane.ERROR_MESSAGE);
 
         }
     }
-    
-    public void populateEmployeesArrayList(){
-        try{
-          FileInputStream file=new FileInputStream("employees.dat");
-          ObjectInputStream inputfile=new ObjectInputStream(file); 
-          
-          boolean endOfFile=false;
-          
-          while(!endOfFile){
-              try{
-                  
-                  employees.add((Employee)inputfile.readObject());
-              }catch(EOFException e){
-                  endOfFile=true;
-              }
-              catch(Exception e){
-                JOptionPane.showMessageDialog(null, e.getMessage());
 
-              }
-          }
-          inputfile.close();
-        }
-        
-        catch(IOException e){
+    public void populateEmployeesArrayList() {
+        try {
+            FileInputStream file = new FileInputStream("employees.dat");
+            ObjectInputStream inputfile = new ObjectInputStream(file);
+
+            boolean endOfFile = false;
+
+            while (!endOfFile) {
+                try {
+
+                    employees.add((Employee) inputfile.readObject());
+                } catch (EOFException e) {
+                    endOfFile = true;
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+
+                }
+            }
+            inputfile.close();
+        } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
     }
-    
-        public void saveEmployeesToFile(){
-        
-        try{
-            FileOutputStream file=new FileOutputStream("employees.dat");
-            ObjectOutputStream outputFile=new ObjectOutputStream(file);
-            
-            for(Employee employee:employees){
+
+    public void saveEmployeesToFile() {
+
+        try {
+            FileOutputStream file = new FileOutputStream("employees.dat");
+            ObjectOutputStream outputFile = new ObjectOutputStream(file);
+
+            for (Employee employee : employees) {
                 outputFile.writeObject(employee);
             }
             outputFile.close();
-        }
-        catch(IOException e){
-         JOptionPane.showMessageDialog(null, e.getMessage());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
 
         }
-        
+
     }
 
     /**
@@ -322,114 +303,84 @@ public class EditEmployee extends javax.swing.JFrame {
 
     private void EmployeeCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmployeeCBActionPerformed
         // TODO add your handling code here:
-try{
-          int index=EmployeeCB.getSelectedIndex();
-        String idString=Integer.toString(employees.get(index).getSaffID());
-        firstName.setText(employees.get(index).getFirstName());
-        lastName.setText(employees.get(index).getLastName());
-        ID.setText(idString);
-        int jobIndex=0;
-        Job job=employees.get(index).getJob();
-        
-        for(int i=0;i<jobs.size();i++){
-            if(jobs.get(i).equals(job)){
-                jobIndex=i;
-                break;
+        try {
+            int index = EmployeeCB.getSelectedIndex();
+            String idString = Integer.toString(employees.get(index).getSaffID());
+            firstName.setText(employees.get(index).getFirstName());
+            lastName.setText(employees.get(index).getLastName());
+            ID.setText(idString);
+            int jobIndex = 0;
+            Job job = employees.get(index).getJob();
+
+            for (int i = 0; i < jobs.size(); i++) {
+                if (jobs.get(i).equals(job)) {
+                    jobIndex = i;
+                    break;
+                }
             }
-        }
-        
-          try{
-            JobCB.setSelectedIndex(jobIndex);
-        }
-        
-        
-        
-        catch(IllegalArgumentException f){
-        JOptionPane.showMessageDialog(null, "Job not found","Message",JOptionPane.ERROR_MESSAGE);
-        deleteButton.setEnabled(false);
-        saveButton.setEnabled(false);
-        
-       
+
+            try {
+                JobCB.setSelectedIndex(jobIndex);
+            } catch (IllegalArgumentException f) {
+                JOptionPane.showMessageDialog(null, "Job not found", "Message", JOptionPane.ERROR_MESSAGE);
+                deleteButton.setEnabled(false);
+                saveButton.setEnabled(false);
+
+            }
+
+        } catch (IndexOutOfBoundsException e) {
+            //JOptionPane.showMessageDialog(null,"Employee not found" );
+            JOptionPane.showMessageDialog(null, "Employee not found", "Message", JOptionPane.ERROR_MESSAGE);
+
+            firstName.setText("");
+            lastName.setText("");
+            ID.setText("");
 
         }
-        
 
 
-        }
-        
-        
-        catch(IndexOutOfBoundsException e){
-          //JOptionPane.showMessageDialog(null,"Employee not found" );
-          JOptionPane.showMessageDialog(null, "Employee not found","Message",JOptionPane.ERROR_MESSAGE);
-
-           firstName.setText("");
-           lastName.setText("");
-           ID.setText("");
-           
-        }
-        
-
-        
-        
     }//GEN-LAST:event_EmployeeCBActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         // TODO add your handling code here:
-        
-        String employeeFirstName=firstName.getText().trim();
-        String employeeLastName=lastName.getText().trim();
-        if(employeeFirstName.isEmpty()||employeeLastName.isEmpty()){
-           JOptionPane.showMessageDialog(null, "Please fill all the required fields!");
-           
-        }
-        else if (containsNumbers(employeeLastName)||containsNumbers(employeeFirstName)){
+
+        String employeeFirstName = firstName.getText().trim();
+        String employeeLastName = lastName.getText().trim();
+        if (employeeFirstName.isEmpty() || employeeLastName.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please fill all the required fields!");
+
+        } else if (containsNumbers(employeeLastName) || containsNumbers(employeeFirstName)) {
             JOptionPane.showMessageDialog(null, "First and last names can't contain numbers");
+        } else {
+            int index = EmployeeCB.getSelectedIndex();
+            employees.get(index).setFirstName(employeeFirstName);
+            employees.get(index).setLastName(employeeLastName);
+            Job job = jobs.get(JobCB.getSelectedIndex());
+            employees.get(index).setJob(job);
+
+            saveEmployeesToFile();
+            JOptionPane.showMessageDialog(null, "successfully updated");
+
         }
-        else{
-        int index=EmployeeCB.getSelectedIndex();
-        employees.get(index).setFirstName(employeeFirstName);
-        employees.get(index).setLastName(employeeLastName);
-        Job job=jobs.get(JobCB.getSelectedIndex());
-        employees.get(index).setJob(job);
-        
-        saveEmployeesToFile();
-        JOptionPane.showMessageDialog(null, "successfully updated");
-        
-        
-        }
-     
-        
-        
-        
+
+
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-     // TODO add your handling code here:
-     try{
-      int index=EmployeeCB.getSelectedIndex();
-     
-     employees.remove(index);
-     saveEmployeesToFile();
-     JOptionPane.showMessageDialog(null, "Successfully deleted");
-     this.dispose();
-     }
-     
-     catch(IndexOutOfBoundsException e){
-         JOptionPane.showMessageDialog(null, "No employee chosen to delete");
-                 
-     }
+        // TODO add your handling code here:
+        try {
+            int index = EmployeeCB.getSelectedIndex();
 
-     
-     
-     
-     
+            employees.remove(index);
+            saveEmployeesToFile();
+            JOptionPane.showMessageDialog(null, "Successfully deleted");
+            this.dispose();
+        } catch (IndexOutOfBoundsException e) {
+            JOptionPane.showMessageDialog(null, "No employee chosen to delete");
+
+        }
 
 
-     
-     
-     
-
-        
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void IDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDActionPerformed
