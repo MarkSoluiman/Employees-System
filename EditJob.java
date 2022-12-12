@@ -32,12 +32,15 @@ public class EditJob extends javax.swing.JFrame {
         saveEmployeesToFile();
         String [] jobsArrayString= new String[jobs.size()];
       
+        //We populate the string array with the jobs names to use it in the 
+        //jobs combobox
         for(int i=0;i <jobs.size();i++){
             jobsArrayString[i]=jobs.get(i).getName();
         }
         
         jobsCB.setModel(new javax.swing.DefaultComboBoxModel<>( jobsArrayString));
         
+        //We do this if no jobs are found
         if(jobs.isEmpty()){
         jobsCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No jobs found to edit" }));
         Salary.setEditable(false);
@@ -49,15 +52,15 @@ public class EditJob extends javax.swing.JFrame {
         
     }
     
-        //Returns true if text contains numbers,false otherwise.
+    //Returns true if text contains numbers,false otherwise.
     
-        public boolean containsNumbers(String s){
+    public boolean containsNumbers(String s){
         return (s.matches(".*[0-9].*"));
     }
         
-       //Returns true if text contains a positive number, false otherwise.
+    //Returns true if text contains a positive number, false otherwise.
         
-     public boolean isPositiveInteger(String s) {
+    public boolean isPositiveInteger(String s) {
 
     if (s == null) {
         return false;
@@ -79,19 +82,26 @@ public class EditJob extends javax.swing.JFrame {
     return true;
 }
     
+    //Reads every Employee from the employees.dat file and puts them into the
+    // employees arraylist
     public void populateEmployeesArrayList(){
         try{
             FileInputStream file=new FileInputStream("employees.dat");
             ObjectInputStream inputFile=new ObjectInputStream(file);
             boolean endOfFile=false;
+            
+            //While the file didnt come to an end, we put each employee
+            //in the file into the employees arraylist
             while(!endOfFile){
                 try{
                     employees.add((Employee)(inputFile.readObject()));
                     
                 }
+                //When the file reaches an end, we set endOfFile to true
                 catch(EOFException e){
                     endOfFile=true;
                 }
+                //To catch anything that can go wrong 
                 catch(Exception f){
                 JOptionPane.showMessageDialog(null, f.getMessage(),"Message",JOptionPane.ERROR_MESSAGE);
 
@@ -106,6 +116,8 @@ public class EditJob extends javax.swing.JFrame {
         }
     }
     
+    //Reads every employee in the employees arraylist and writes them into the 
+    //employees.dat file as employees objects
     public void saveEmployeesToFile(){
         try{
             FileOutputStream file=new FileOutputStream("employees.dat");
@@ -122,6 +134,8 @@ public class EditJob extends javax.swing.JFrame {
         
     }
     
+     //Reads every Job from the jobs.dat file and puts them into the
+    // jobs arraylist
     public void populateJobsArrayList(){
         try{
               FileInputStream file=new FileInputStream("jobs.dat");
@@ -148,6 +162,8 @@ public class EditJob extends javax.swing.JFrame {
         }
     }
     
+    //Reads every job in the jobs arraylist and writes them into the 
+    //jobs.dat file as jobs objects
     public void saveJobsToFile(){
         
         try{
@@ -304,7 +320,7 @@ public class EditJob extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         String jobSalary=Salary.getText().trim();
-        
+        //We check if the user has a valid input to edit the job
         if(!containsNumbers(jobSalary)|| !isPositiveInteger(jobSalary)){
             JOptionPane.showMessageDialog(null, "The job salary has to be only in positive numbers");
         }
@@ -351,16 +367,22 @@ public class EditJob extends javax.swing.JFrame {
         
         boolean takenJob=false;
         int index=jobsCB.getSelectedIndex();
+        //We check if the job that was chosen to be deleted is already taken by
+        //one of the employees or not
         for(Employee employee:employees){
-            if(jobs.get(index).getName().equalsIgnoreCase(employee.getJob().getName())){
+            if(jobs.get(index).getName().equalsIgnoreCase(employee.getJob().getName()))
+            {
             takenJob=true;
             break;
             }
         }
+        //We show a warning message that the job chosen to be deleted is taken
+        // by an employee
         if(takenJob){
             JOptionPane.showMessageDialog(null, "Job is taken by one or more employees");
             
         }
+        //if the job was not taken by an employee, we delete the job
         else{
         jobs.remove(index);
         saveJobsToFile();
